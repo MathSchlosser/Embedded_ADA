@@ -1,0 +1,34 @@
+V "GNAT Lib v2021"
+M P W=b
+A -gnatA
+A --RTS=C:\gnat\2021-arm-elf\arm-eabi\lib\gnat\zfp-cortex-m4f\
+A -mlittle-endian
+A -mthumb
+A -mfloat-abi=hard
+A -mcpu=cortex-m4
+A -mfpu=fpv4-sp-d16
+A -march=armv7e-m+fp
+P ZX
+
+RN
+RV NO_IO
+RV NO_IMPLEMENTATION_PRAGMAS
+
+U main%b		main.adb		71d7402e NE OO SU IL
+W ada%s			ada.ads			ada.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+
+D ada.ads		20210520153144 76789da1 ada%s
+D a-textio.ads		20210520153144 ffc84532 ada.text_io%s
+D main.adb		20231108230914 8e1f051c main%b
+D system.ads		20210520153144 42e16c16 system%s
+G a e
+G c Z b b [main standard 3 11 none]
+X 1 ada.ads
+16K9*Ada 20e8 3|1r6 5r4
+X 2 a-textio.ads
+36K13*Text_IO 52e16 3|1w10 5r8
+46U14*Put_Line 3|5s16
+X 3 main.adb
+3U11*main 3b11 6l5 6t9
+

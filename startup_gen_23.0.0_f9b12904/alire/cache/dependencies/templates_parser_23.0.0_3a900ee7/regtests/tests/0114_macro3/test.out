@@ -1,0 +1,12 @@
+[INFO] macro.tmplt
+[C_INFO]  1 FALSE
+[TEXT] --
+[TEXT] both 2 and 3
+[TEXT] --
+[TEXT] only second 5
+[TEXT] --
+--
+both 2 and 3
+--
+only second 5
+--

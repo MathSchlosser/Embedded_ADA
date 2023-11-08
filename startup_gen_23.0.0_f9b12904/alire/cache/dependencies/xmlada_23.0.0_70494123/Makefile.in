@@ -1,0 +1,135 @@
+## The type of library we want to build. Possible values:
+##   relocatable
+##   static
+LIBRARY_TYPE=static
+
+# Replace with the location for the installation directory
+PACKAGE_TARNAME=@PACKAGE_TARNAME@
+VERSION=@PACKAGE_VERSION@
+BUILDS_SHARED=@GNAT_BUILDS_SHARED@
+prefix=@prefix@
+
+# Add support for passing extra switches
+GPRBUILD_OPTIONS=
+
+# Set a default value (ignored if set in the environment)
+PROCESSORS?=0
+GPRBUILD=@gprbuild@ -j${PROCESSORS} -m ${GPRBUILD_OPTIONS}
+GPRINSTALL=@gprinstall@
+TARGET=@target@
+TARGET_ALIAS=@target_alias@
+HOST=@host@
+
+# Compiler mode: one of "distrib", "Debug", "Production", "profile", "coverage"
+MODE=@BUILD_TYPE@
+
+# In some cases, we use cp instead of install for doing the installation,
+# since the latter does not support installing multiple files at once.
+RM=rm
+
+#########################################################################
+## Nothing to modify below this point
+#########################################################################
+
+MODULES=unicode input_sources sax dom schema
+MODULE_INSTALL=${MODULES:%=%_inst}
+
+GPROPTS=-XXMLADA_BUILD_MODE=${MODE} -XPROCESSORS=${PROCESSORS}
+
+ifeq (${HOST},${TARGET})
+IPREFIX=${DESTDIR}${prefix}
+else
+GPROPTS+=--target=${TARGET_ALIAS}
+IPREFIX=${DESTDIR}${prefix}/${TARGET_ALIAS}
+endif
+
+ifdef RTS
+GPROPTS+=--RTS=${RTS}
+IPREFIX:=${IPREFIX}/$(notdir ${RTS})
+endif
+
+# For the 64 bits architectures, the large code model has to be used.
+# with rtp-large, gprconfig ensures that -mcmodel=large is used,
+# but it is managed here for the default (kernel).
+GPROPTS_EXTRA=
+ifneq ($(strip $(filter aarch64-wrs-vxworks7r2 powerpc64-wrs-vxworks7r2 x86_64-wrs-vxworks7r2,${TARGET_ALIAS})),)
+ifndef RTS
+# This covers the kernel RTS because for rtp, the RTS variable is defined to rtp.
+# kernel is the default and the RTS variable is not defined in that case.
+GPROPTS_EXTRA+=-cargs -mcmodel=large -largs -mcmodel=large
+endif
+endif
+
+ifeq (${BUILDS_SHARED},yes)
+all: static relocatable static-pic
+install: install-clean install-static install-relocatable install-static-pic
+else
+all: static
+install: install-clean install-static
+endif
+
+static:
+	${GPRBUILD} -p -XLIBRARY_TYPE=static ${GPROPTS} xmlada.gpr ${GPROPTS_EXTRA}
+
+shared relocatable:
+	${GPRBUILD} -p -XLIBRARY_TYPE=relocatable ${GPROPTS} xmlada.gpr ${GPROPTS_EXTRA}
+
+static-pic:
+	${GPRBUILD} -p -XLIBRARY_TYPE=static-pic ${GPROPTS} xmlada.gpr ${GPROPTS_EXTRA}
+
+# Rebuild the tests (and not the XML/Ada code itself)
+test: force
+	${GPRBUILD} -p -XLIBRARY_TYPE=static ${GPROPTS} \
+		-XTESTS_ACTIVATED=Only xmlada.gpr ${GPROPTS_EXTRA}
+
+# Run the tests. This requires an install of XML/Ada first
+run_test: force
+	@make --no-print-directory -C tests tests
+
+run_test_valgrind: test
+	cd tests/domt; valgrind --tool=memcheck --leak-check=full ./obj/testxml -auto
+
+docs: force
+	-${MAKE} -e -C docs html latexpdf
+
+install-clean-obsolete:
+ifneq (,$(wildcard $(IPREFIX)/lib/gnat/manifests/xmlada))
+	-${GPRINSTALL} -f --uninstall ${GPROPTS} --prefix=$(IPREFIX) \
+		--project-subdir=lib/gnat xmlada
+endif
+
+install-clean: install-clean-obsolete
+ifneq (,$(wildcard $(IPREFIX)/share/gpr/manifests/xmlada))
+	-${GPRINSTALL} -f --uninstall ${GPROPTS} --prefix=$(IPREFIX) xmlada
+endif
+
+## Do the installation for an explicit target
+
+GPRINST_OPTS=-f -p ${GPROPTS} --prefix=${IPREFIX} --install-name=xmlada \
+	--build-var=LIBRARY_TYPE --build-var=XMLADA_BUILD
+
+install-static:
+	${GPRINSTALL} -XLIBRARY_TYPE=static ${GPRINST_OPTS} \
+		--build-name=static  xmlada.gpr
+
+install-shared install-relocatable:
+	${GPRINSTALL} -XLIBRARY_TYPE=relocatable ${GPRINST_OPTS} \
+		--build-name=relocatable xmlada.gpr
+
+install-static-pic:
+	${GPRINSTALL} -XLIBRARY_TYPE=static-pic ${GPRINST_OPTS} \
+		--build-name=static-pic xmlada.gpr
+
+
+clean_%: force
+	-gprclean -XLIBRARY_TYPE=$* -q xmlada.gpr
+	-gprclean -XLIBRARY_TYPE=$* -q -XTESTS_ACTIVATED=Yes xmlada.gpr
+
+clean: clean_relocatable clean_static clean_static-pic
+	cd docs; ${MAKE} -e clean
+
+distclean: clean
+	${RM} tests/dom/default.gpr
+	${RM} Makefile config.cache config.log config.status Makefile.314
+
+force:

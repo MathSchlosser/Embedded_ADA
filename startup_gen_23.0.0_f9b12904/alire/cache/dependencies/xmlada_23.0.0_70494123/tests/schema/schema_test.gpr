@@ -1,0 +1,22 @@
+with "../../xmlada_shared";
+with "xmlada_schema";
+with "xmlada_input";
+
+project Schema_Test is
+
+   for Main use
+     ("testschema.adb", "test_date_time.adb",
+      "testnumbers.adb", "testdomschema.adb", "schematest.adb",
+      "cleanup_schema.adb");
+
+   for Object_Dir use "obj";
+   package Builder  renames XmlAda_Shared.Builder;
+
+   package Compiler is
+      for Switches ("Ada") use
+         XmlAda_Shared.Compiler'Switches ("Ada") & ("-gnat05");
+   end Compiler;
+   package Binder   renames XmlAda_Shared.Binder;
+   package Linker renames XmlAda_Shared.Linker;
+
+end Schema_Test;

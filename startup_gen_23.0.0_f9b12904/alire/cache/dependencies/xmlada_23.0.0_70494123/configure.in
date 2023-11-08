@@ -1,0 +1,34 @@
+AC_INIT(XML/Ada,18.0w,report@adacore.com,xmlada)
+AC_CANONICAL_SYSTEM
+
+# Also update in AC_INIT above
+XMLADA_VERSION=AC_PACKAGE_VERSION()
+
+AM_GNAT_BUILDS_SHARED
+CHECK_BUILD_TYPE
+AM_SO_SUFFIX
+
+# Defaults
+AC_PROG_INSTALL
+AC_PROG_LN_S
+MKDIR="mkdir -p"
+
+# Overrides
+case "${host_os}" in
+  lynxos*)
+    CP="cp -p"
+    MKDIR="mkdir -p -f"
+    ;;
+
+  cygwin*|mingw32*)
+    LN="cp -p -f"
+    ;;
+esac
+
+AC_SUBST(MKDIR)
+AC_SUBST(CC)
+
+LIB=`basename $libdir`
+AC_SUBST(LIB)
+
+AC_OUTPUT(xmlada_shared.gpr Makefile tests/dom/default.gpr)

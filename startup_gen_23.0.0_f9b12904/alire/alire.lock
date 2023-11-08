@@ -1,0 +1,301 @@
+# THIS IS A MACHINE-GENERATED FILE. DO NOT EDIT MANUALLY.
+
+[solution]
+[solution.context]
+solved = true
+[[solution.state]]
+crate = "gnat"
+fulfilment = "solved"
+pinned = false
+shared = true
+transitivity = "indirect"
+versions = "(/=2020) & (>=11)"
+[solution.state.release]
+auto-gpr-with = false
+description = "The GNAT Ada compiler - ARM cross-compiler"
+licenses = "GPL-3.0-or-later AND GPL-3.0-or-later WITH GCC-exception-3.1"
+maintainers = [
+"chouteau@adacore.com",
+]
+maintainers-logins = [
+"Fabien-Chouteau",
+]
+name = "gnat_arm_elf"
+provides = [
+"gnat=13.2.1",
+]
+version = "13.2.1"
+[solution.state.release.configuration]
+auto_gpr_with = true
+disabled = true
+generate_ada = true
+generate_c = true
+generate_gpr = true
+output_dir = "config"
+[solution.state.release.environment]
+[solution.state.release.environment.PATH]
+prepend = "${CRATE_ROOT}/bin"
+[solution.state.release.origin]
+binary = true
+hashes = [
+"sha256:c4f85bf8da38e911cd81cf6e767d78267d721f73d25307925450b982bcaecb49",
+]
+url = "https://github.com/alire-project/GNAT-FSF-builds/releases/download/gnat-13.2.0-1/gnat-arm-elf-windows64-13.2.0-1.tar.gz"
+[[solution.state]]
+crate = "gnatcoll"
+fulfilment = "solved"
+pinned = false
+shared = false
+transitivity = "direct"
+versions = "~23.0.0"
+[solution.state.release]
+authors = [
+"AdaCore",
+]
+description = "GNAT Components Collection - Core packages"
+licenses = "GPL-3.0-or-later WITH GCC-exception-3.1"
+maintainers = [
+"chouteau@adacore.com",
+]
+maintainers-logins = [
+"Fabien-Chouteau",
+]
+name = "gnatcoll"
+project-files = [
+"gnatcoll.gpr",
+]
+tags = [
+"gnatcoll",
+"json",
+"email",
+"refcount",
+"projects",
+"gpr",
+"vfs",
+]
+version = "23.0.0"
+website = "https://github.com/adacore/gnatcoll-core"
+[solution.state.release.configuration]
+auto_gpr_with = true
+disabled = true
+generate_ada = true
+generate_c = true
+generate_gpr = true
+output_dir = "config"
+[solution.state.release.gpr-externals]
+GNATCOLL_ATOMICS = [
+"intrinsic",
+"mutex",
+]
+GNATCOLL_BUILD_MODE = [
+"DEBUG",
+"PROD",
+]
+GNATCOLL_OS = [
+"windows",
+"unix",
+"osx",
+]
+LIBRARY_TYPE = [
+"static",
+"relocatable",
+"static-pic",
+]
+[solution.state.release.gpr-set-externals]
+GNATCOLL_BUILD_MODE = "PROD"
+GNATCOLL_OS = "windows"
+GNATCOLL_VERSION = "23.0.0"
+[solution.state.release.origin]
+hashes = [
+"sha512:29478a20d96b83f7f1ded15c5e5129b00566ca1725550697cdd95366c21d8e50a8f296850b2adf68c3a7a339ffa4ac9c9a58e76058f3210d9b91e0bd138ae9bc",
+]
+url = "https://github.com/AdaCore/gnatcoll-core/archive/v23.0.0/gnatcoll-core-23.0.0.zip"
+[[solution.state.release.depends-on]]
+libgpr = "~23.0.0"
+[[solution.state]]
+crate = "libgpr"
+fulfilment = "solved"
+pinned = false
+shared = false
+transitivity = "direct"
+versions = "~23.0.0"
+[solution.state.release]
+authors = [
+"AdaCore",
+]
+description = "GNAT Project File Library"
+licenses = "GPL-3.0-or-later WITH GCC-exception-3.1"
+maintainers = [
+"chouteau@adacore.com",
+]
+maintainers-logins = [
+"Fabien-Chouteau",
+]
+name = "libgpr"
+project-files = [
+"gpr/gpr.gpr",
+]
+version = "23.0.0"
+[solution.state.release.configuration]
+auto_gpr_with = true
+disabled = true
+generate_ada = true
+generate_c = true
+generate_gpr = true
+output_dir = "config"
+[solution.state.release.gpr-externals]
+GPR_BUILD = [
+"debug",
+"production",
+"coverage",
+"profiling",
+]
+LIBRARY_TYPE = [
+"static",
+"relocatable",
+"static-pic",
+]
+[solution.state.release.origin]
+hashes = [
+"sha512:34e332b981e907c59a4a354624a3048815c73daf662146aac3db7f1dc983990360a99a04df82d9e3b23d5ba8521f76eb7adb6284cac4ad3f959a896a8a5a8fad",
+]
+url = "https://github.com/AdaCore/gprbuild/archive/v23.0.0/gprbuild-23.0.0.zip"
+[[solution.state.release.depends-on]]
+gnat = "/=2020"
+xmlada = "~23.0.0"
+[[solution.state]]
+crate = "templates_parser"
+fulfilment = "solved"
+pinned = false
+shared = false
+transitivity = "direct"
+versions = "~23.0.0"
+[solution.state.release]
+authors = [
+"AdaCore",
+]
+description = "Templates Parser: File generation from templates in Ada"
+licenses = "GPL-3.0-or-later WITH GCC-exception-3.1"
+maintainers = [
+"chouteau@adacore.com",
+]
+maintainers-logins = [
+"Fabien-Chouteau",
+]
+name = "templates_parser"
+project-files = [
+"templates_parser.gpr",
+]
+version = "23.0.0"
+website = "https://github.com/AdaCore/templates-parser"
+[solution.state.release.configuration]
+auto_gpr_with = true
+disabled = true
+generate_ada = true
+generate_c = true
+generate_gpr = true
+output_dir = "config"
+[solution.state.release.environment]
+[solution.state.release.environment.ADAFLAGS]
+set = "-gnaty-d"
+[solution.state.release.gpr-externals]
+LIBRARY_TYPE = [
+"static",
+"relocatable",
+]
+PRJ_BUILD = [
+"Debug",
+"Release",
+]
+TP_TASKING = [
+"No_Tasking",
+"Standard_Tasking",
+]
+TP_XMLADA = [
+"Installed",
+"Disabled",
+]
+[solution.state.release.gpr-set-externals]
+PRJ_BUILD = "Release"
+TP_XMLADA = "Installed"
+[solution.state.release.origin]
+hashes = [
+"sha512:3a900ee7614efa41ff04959fe980cdee47a046c9a40d34b7ead01620b8989721771c0d4154c9eb885fc53c9e725d10f8d721a756c55c53397100e32bc59bceac",
+]
+url = "https://github.com/AdaCore/templates-parser/archive/v23.0.0/templates-parser-23.0.0.zip"
+[[solution.state.release.actions]]
+command = [
+"cp",
+"config/tp_xmlada_installed.gpr",
+"tp_xmlada.gpr",
+]
+directory = "."
+type = "post-fetch"
+[[solution.state.release.depends-on]]
+xmlada = "~23.0.0"
+[[solution.state]]
+crate = "xmlada"
+fulfilment = "solved"
+pinned = false
+shared = false
+transitivity = "indirect"
+versions = "~23.0.0"
+[solution.state.release]
+authors = [
+"AdaCore",
+]
+description = "The XML/Ada toolkit"
+licenses = "GPL-3.0-or-later WITH GCC-exception-3.1"
+maintainers = [
+"chouteau@adacore.com",
+]
+maintainers-logins = [
+"Fabien-Chouteau",
+]
+name = "xmlada"
+project-files = [
+"distrib/xmlada.gpr",
+"dom/xmlada_dom.gpr",
+"sax/xmlada_sax.gpr",
+"input_sources/xmlada_input.gpr",
+"schema/xmlada_schema.gpr",
+"unicode/xmlada_unicode.gpr",
+]
+version = "23.0.0"
+website = "https://github.com/AdaCore/xmlada"
+[solution.state.release.configuration]
+auto_gpr_with = true
+disabled = true
+generate_ada = true
+generate_c = true
+generate_gpr = true
+output_dir = "config"
+[solution.state.release.gpr-externals]
+LIBRARY_TYPE = [
+"static",
+"relocatable",
+"static-pic",
+]
+XMLADA_BUILD_MODE = [
+"distrib",
+"Debug",
+"Production",
+"profile",
+"coverage",
+"nochecks",
+]
+[solution.state.release.origin]
+hashes = [
+"sha512:70494123705a6e6006050146444b2f96e2274f01b59f6d2810d3e2e13a46a83a4a13721725a9ba85d24a3950df079e7f4fa2d8acc5ce5a2867ab3ae2b9fd5cc8",
+]
+url = "https://github.com/AdaCore/xmlada/archive/v23.0.0/xmlada-23.0.0.zip"
+[[solution.state.release.actions]]
+command = [
+"sh",
+"configure",
+]
+directory = "."
+type = "post-fetch"
+[[solution.state.release.depends-on]]
+gnat = ">=11"
+

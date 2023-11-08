@@ -1,0 +1,3 @@
+driver: python
+control:
+- [SKIP, "env.target.triplet != 'riscv64-elf'", "Test for riscv64-elf"]

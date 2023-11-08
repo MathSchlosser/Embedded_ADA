@@ -1,0 +1,104 @@
+------------------------------------------------------------------------------
+--                             Templates Parser                             --
+--                                                                          --
+--                      Copyright (C) 2008-2016, AdaCore                    --
+--                                                                          --
+--  This is free software;  you can redistribute it  and/or modify it       --
+--  under terms of the  GNU General Public License as published  by the     --
+--  Free Software  Foundation;  either version 3,  or (at your option) any  --
+--  later version.  This software is distributed in the hope  that it will  --
+--  be useful, but WITHOUT ANY WARRANTY;  without even the implied warranty --
+--  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU     --
+--  General Public License for  more details.                               --
+--                                                                          --
+--  You should have  received  a copy of the GNU General  Public  License   --
+--  distributed  with  this  software;   see  file COPYING3.  If not, go    --
+--  to http://www.gnu.org/licenses for a complete copy of the license.      --
+------------------------------------------------------------------------------
+
+abstract project TP_Shared is
+
+   for Source_Dirs use ();
+
+   type Build_Type is ("Debug", "Release");
+   Build : Build_Type := external ("PRJ_BUILD", "Debug");
+
+   type Tasking_Type is ("No_Tasking", "Standard_Tasking");
+   Tasking : Tasking_Type := external ("TP_TASKING", "Standard_Tasking");
+
+   type XMLAda_Type is ("Installed", "Disabled");
+   XMLAda : XMLAda_Type := external ("TP_XMLADA", "Disabled");
+
+   type Library_Kind is ("relocatable", "static", "static-pic");
+   Library_Type : Library_Kind := external ("LIBRARY_TYPE", "static");
+
+   Processors := external ("PROCESSORS", "0");
+
+   Version := external ("VERSION", "dev");
+
+   Build_Dir := ".build";
+
+   Adaflags := external_as_list ("ADAFLAGS", " ");
+   Ldflags := external_as_list ("LDFLAGS", " ");
+
+   --------------
+   -- Compiler --
+   --------------
+
+   Common_Options :=
+     ("-gnat12", "-gnatwcfijkmruv", "-gnaty3abcdefhiIklmnoOprstx");
+   --  Common options used for the Debug and Release modes
+
+   Debug_Options :=
+     ("-g", "-gnata", "-gnatVa", "-gnatQ", "-gnato", "-gnatwe", "-Wall");
+
+   Release_Options :=
+     ("-O2", "-gnatn");
+
+   package Compiler is
+      case Build is
+         when "Release" =>
+            for Default_Switches ("Ada") use Common_Options & Release_Options;
+         when "Debug" =>
+            for Default_Switches ("Ada") use Common_Options & Debug_Options;
+      end case;
+
+      for Default_Switches ("Ada")
+        use Compiler'Default_Switches ("Ada") & Adaflags;
+      --  Put user flags at they end so that they take precedence.
+   end Compiler;
+
+   ------------
+   -- Binder --
+   ------------
+
+   package Binder is
+      for Default_Switches ("Ada") use ("-E", "-Vversion=" & Version);
+   end Binder;
+
+   -------------
+   -- Builder --
+   -------------
+
+   package Builder is
+      for Default_Switches ("Ada") use ("-m", "-j" & Processors);
+   end Builder;
+
+   ------------
+   -- Linker --
+   ------------
+
+   package Linker is
+      --  Put options like --as-needed before options like -l.
+      for Leading_Switches ("Ada") use Ldflags;
+   end Linker;
+
+   ---------
+   -- Ide --
+   ---------
+
+   package Ide is
+      for VCS_Kind use "auto";
+   end Ide;
+
+end TP_Shared;

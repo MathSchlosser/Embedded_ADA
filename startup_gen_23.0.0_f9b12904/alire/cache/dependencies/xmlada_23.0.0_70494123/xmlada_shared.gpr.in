@@ -1,0 +1,112 @@
+------------------------------------------------------------------------------
+--                     XML/Ada - An XML suite for Ada95                     --
+--                                                                          --
+--                     Copyright (C) 2001-2020, AdaCore                     --
+--                                                                          --
+-- This library is free software;  you can redistribute it and/or modify it --
+-- under terms of the  GNU General Public License  as published by the Free --
+-- Software  Foundation;  either version 3,  or (at your  option) any later --
+-- version. This library is distributed in the hope that it will be useful, --
+-- but WITHOUT ANY WARRANTY;  without even the implied warranty of MERCHAN- --
+-- TABILITY or FITNESS FOR A PARTICULAR PURPOSE.                            --
+--                                                                          --
+-- As a special exception under Section 7 of GPL version 3, you are granted --
+-- additional permissions described in the GCC Runtime Library Exception,   --
+-- version 3.1, as published by the Free Software Foundation.               --
+--                                                                          --
+-- You should have received a copy of the GNU General Public License and    --
+-- a copy of the GCC Runtime Library Exception along with this program;     --
+-- see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see    --
+-- <http://www.gnu.org/licenses/>.                                          --
+--                                                                          --
+------------------------------------------------------------------------------
+
+abstract project XmlAda_Shared is
+
+   Version := "@PACKAGE_VERSION@";
+
+   type Library_Type_Type is ("relocatable", "static", "static-pic");
+   Library_Type : Library_Type_Type := external ("LIBRARY_TYPE", "@DEFAULT_LIBRARY_TYPE@");
+
+   for Source_Dirs use ();
+
+   type Mode_Type is ("distrib", "Debug", "Production", "profile", "coverage",
+                      "nochecks");
+   Mode : Mode_Type := external ("XMLADA_BUILD_MODE",
+                                 external ("BUILD", "@BUILD_TYPE@"));
+
+   Processors := External ("PROCESSORS", "0");
+
+   So_Ext := "@SO_EXT@";
+
+   package Builder is
+       case Mode is
+          when "Production" | "nochecks" =>
+             for Global_Configuration_Pragmas use "gnat_optimize.adc";
+             for Switches ("Ada") use ("-j" & Processors);
+          when "Debug" =>
+             for Global_Configuration_Pragmas use "gnat_debug.adc";
+             for Switches ("Ada") use ("-g", "-j" & Processors);
+          when others =>
+             for Switches ("Ada") use ("-g", "-j" & Processors);
+       end case;
+   end Builder;
+
+   package compiler is
+      warnings := ("-gnatwua", "-gnaty", "-gnatQ");
+
+      case Mode is
+         when "distrib" =>
+            for Switches ("Ada") use ("-O2", "-gnatn");
+
+         when "coverage" =>
+            for Switches ("Ada") use warnings
+              & ("-g", "-gnata", "-gnatwe",
+                 "-fprofile-arcs", "-ftest-coverage");
+
+         when "Debug" =>
+            for Switches ("Ada") use warnings & ("-g", "-gnata", "-gnatwe");
+            --  & ("-g", "-gnata", "-gnatVaMI");
+
+         when "Production" =>
+            for Switches ("Ada") use warnings & ("-O2", "-gnatn");
+
+         when "nochecks" =>
+            for Switches ("Ada") use warnings & ("-O2", "-gnatn", "-gnatp");
+
+         when "profile" =>
+            for Switches ("Ada") use warnings & ("-g", "-pg");
+      end case;
+   end compiler;
+
+   package binder is
+      case Mode is
+         when "Debug" =>
+            for Switches ("Ada") use ("-E");
+         when "distrib" | "Production" | "profile" | "coverage" | "nochecks" =>
+            null;
+      end case;
+   end binder;
+
+   package linker is
+      case Mode is
+         when "profile" =>
+            for Switches ("Ada") use ("-pg");
+
+         when "Debug" =>
+--           for Switches ("Ada") use ("-lgmem");
+
+         when "coverage" =>
+            for Switches ("Ada") use ("-fprofile-arcs");
+
+         when "distrib" =>
+            null;
+
+         when "Production" | "nochecks" =>
+      end case;
+   end linker;
+
+   package Ide is
+   end Ide;
+
+end XmlAda_Shared;

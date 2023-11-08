@@ -1,0 +1,5 @@
+[gerrit]
+host = git.adacore.com
+port = 29418
+project = gnatcoll-core
+defaultbranch = 23.0

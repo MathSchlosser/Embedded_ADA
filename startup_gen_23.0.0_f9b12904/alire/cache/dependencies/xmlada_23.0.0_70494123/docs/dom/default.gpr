@@ -1,0 +1,5 @@
+with "../../dom/xmlada_dom";
+with "../../schema/xmlada_schema";
+project Default is
+   for Main use ("domexample.adb", "domexample2.adb", "domschemaexample.adb");
+end Default;
